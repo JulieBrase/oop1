@@ -83,3 +83,37 @@ test('имя больше 10 символов', () => {
 test('некорректный тип персонажа', () => {
   expect(() => new Character('Персонаж', 'НекорректныйТип')).toThrow('Тип должен быть одним из: Bowman, Swordsman, Magician, Daemon, Undead, Zombie');
 });
+
+describe('Character', () => {
+  let character;
+
+  beforeEach(() => {
+      character = new Bowman('Robin');
+  });
+
+  test('levelUp increases level and sets health to 100', () => {
+      character.levelUp();
+      expect(character.level).toBe(2);
+      expect(character.attack).toBeCloseTo(30); // 25 * 1.2
+      expect(character.defence).toBeCloseTo(30); // 25 * 1.2
+      expect(character.health).toBe(100);
+  });
+
+  test('levelUp throws error if health is 0', () => {
+      character.health = 0;
+      expect(() => character.levelUp()).toThrow("Нельзя повысить уровень мертвого персонажа.");
+  });
+
+  test('damage decreases health correctly', () => {
+      character.defence = 50; // Задаем защиту
+      character.damage(40);
+      expect(character.health).toBe(80); // 100 - 40 * (1 - 0.5)
+  });
+
+  test('damage does not set health below 0', () => {
+      character.health = 20;
+      character.defence = 50;
+      character.damage(60);
+      expect(character.health).toBe(0);
+  });
+});
